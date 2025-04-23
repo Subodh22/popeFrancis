@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 
 interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -18,13 +19,24 @@ export function Avatar({ className = "", children, ...props }: AvatarProps) {
   );
 }
 
-interface AvatarImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface AvatarImageProps {
   src?: string;
   alt?: string;
+  className?: string;
+  [key: string]: any;
 }
 
-export function AvatarImage({ src, alt = "", ...props }: AvatarImageProps) {
-  return <img src={src} alt={alt} className="h-full w-full object-cover" {...props} />;
+export function AvatarImage({ src, alt = "", className, ...props }: AvatarImageProps) {
+  return (
+    <Image 
+      src={src || "/placeholder-avatar.png"}
+      alt={alt} 
+      width={40}
+      height={40}
+      className={`h-full w-full object-cover ${className || ""}`}
+      {...props} 
+    />
+  );
 }
 
 interface AvatarFallbackProps extends React.HTMLAttributes<HTMLDivElement> {
