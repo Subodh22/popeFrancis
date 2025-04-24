@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import ReactMarkdown from "react-markdown";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { Spinner } from "@/components/ui/spinner";
 
 interface ChatMessageProps {
   role: "user" | "assistant" | "system" | "function" | "data" | "tool";
@@ -15,6 +16,11 @@ export default function ChatMessage({ role, content, isStreaming = false }: Chat
   const isUser = role === "user";
   const contentRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
+  
+  // Log streaming state for debugging
+  useEffect(() => {
+    console.log(`ChatMessage ${role} isStreaming:`, isStreaming);
+  }, [isStreaming, role]);
   
   // Effect to auto-scroll when content changes during streaming
   useEffect(() => {
@@ -77,12 +83,13 @@ export default function ChatMessage({ role, content, isStreaming = false }: Chat
           >
             {content}
           </ReactMarkdown>
-          {isStreaming && !isUser && (
-            <span className="typing-indicator ml-1 mt-1">
-              <span className="dot"></span>
-              <span className="dot"></span>
-              <span className="dot"></span>
-            </span>
+          {!isUser && isStreaming && (
+            <div className="flex items-center mt-2">
+              <div className="flex items-center">
+                <Spinner size="sm" className="mr-2" />
+                <span className="text-sm text-gray-500">Pope Francis is typing...</span>
+              </div>
+            </div>
           )}
         </div>
       </div>

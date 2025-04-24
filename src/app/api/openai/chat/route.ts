@@ -15,6 +15,16 @@ export async function POST(req: Request) {
 
   try {
     const { messages } = await req.json();
+    console.log(`Processing chat request with ${messages.length} messages`);
+    
+    // Ensure we have valid messages before streaming
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "Invalid messages format" }),
+        { status: 400 }
+      );
+    }
+    
     const result = await streamText({
       model: openai("gpt-4.1-mini"),
       messages: convertToCoreMessages(messages),
@@ -38,7 +48,11 @@ Key themes to emphasize:
 When appropriate, gently ask users questions about their own experiences, thoughts, and spiritual journey. Create a dialogue rather than just responding to queries.`,
     });
 
-    return result.toDataStreamResponse();
+    console.log("Stream response created successfully");
+    
+    // Return the stream response and make sure the content-type is set
+    const response = result.toDataStreamResponse();
+    return response;
   } catch (error) {
     console.error("Error in OpenAI chat route:", error);
     return new Response(

@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { SendIcon } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 interface ChatInputProps {
   input: string;
@@ -20,6 +21,11 @@ export default function ChatInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [lastSubmitTime, setLastSubmitTime] = useState(0);
   const DEBOUNCE_TIME = 1000; // 1 second
+  
+  // Log isLoading state for debugging
+  useEffect(() => {
+    console.log("ChatInput isLoading:", isLoading);
+  }, [isLoading]);
   
   // Automatically adjust textarea height based on content
   useEffect(() => {
@@ -73,6 +79,14 @@ export default function ChatInput({
   
   return (
     <form ref={formRef} onSubmit={onSubmit} className="relative">
+      {isLoading && (
+        <div className="absolute -top-6 left-0 right-0 text-center">
+          <div className="inline-flex items-center gap-2 bg-yellow-50 dark:bg-gray-700 px-3 py-1 rounded-full shadow-sm">
+            <Spinner size="sm" />
+            <span className="text-xs text-yellow-800 dark:text-yellow-200">Pope Francis is typing...</span>
+          </div>
+        </div>
+      )}
       <div className="relative flex items-center rounded-xl border dark:border-gray-700 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 dark:focus-within:ring-blue-400 bg-white dark:bg-gray-800 transition-all duration-200 shadow-sm hover:shadow">
         <textarea
           ref={textareaRef}
@@ -89,16 +103,19 @@ export default function ChatInput({
         <button
           type="submit"
           disabled={isLoading || !input.trim() || (Date.now() - lastSubmitTime < DEBOUNCE_TIME)}
-          className="p-2 mr-2 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 active:scale-95"
+          className={`p-2 mr-2 rounded-full ${
+            isLoading 
+              ? 'bg-gray-300 dark:bg-gray-600' 
+              : 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700'
+          } text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 active:scale-95`}
         >
-          <SendIcon className="h-5 w-5" />
+          {isLoading ? (
+            <Spinner size="sm" />
+          ) : (
+            <SendIcon className="h-5 w-5" />
+          )}
         </button>
       </div>
-      {isLoading && (
-        <div className="absolute -top-6 left-0 right-0 text-center">
-          <span className="text-xs text-gray-500 dark:text-gray-400 animate-pulse">Pope Francis is typing...</span>
-        </div>
-      )}
     </form>
   );
 } 
