@@ -10,7 +10,6 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { saveConversation, getUserConversations, clearUserConversations } from "@/lib/services/chatService";
 import LoginPrompt from "../user/LoginPrompt";
 import { useTheme } from "next-themes";
-import { Sun, Moon } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -118,9 +117,16 @@ export default function ChatInterface() {
     if (!user) return;
     
     try {
+      // Ensure messages have all required fields
+      const validMessages = messagesToSave.map(msg => ({
+        id: msg.id || `msg-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        role: msg.role,
+        content: msg.content || ""
+      }));
+      
       const savedId = await saveConversation(
         user.uid,
-        messagesToSave,
+        validMessages,
         conversationId
       );
       
@@ -139,24 +145,15 @@ export default function ChatInterface() {
       
       try {
         setLoading(true);
-        const conversations = await getUserConversations(user.uid);
+        // Always start with a new conversation
+        setMessages(initialMessages);
+        setConversationId(undefined);
+        prevMessageLengthRef.current = initialMessages.length;
         
-        if (conversations.length > 0) {
-          // Use the most recent conversation
-          const recentConversation = conversations[0];
-          setMessages(recentConversation.messages);
-          setConversationId(recentConversation.id);
-          prevMessageLengthRef.current = recentConversation.messages.length;
-        } else {
-          // No conversations found, use initial welcome message
-          setMessages(initialMessages);
-          prevMessageLengthRef.current = initialMessages.length;
-          
-          // Save initial message to Firebase
-          await saveMessageToFirebase(initialMessages);
-        }
+        // Save initial message to Firebase
+        await saveMessageToFirebase(initialMessages);
       } catch (error) {
-        console.error("Error loading conversations:", error);
+        console.error("Error setting up new conversation:", error);
         setMessages(initialMessages);
         prevMessageLengthRef.current = initialMessages.length;
       } finally {
@@ -247,21 +244,6 @@ export default function ChatInterface() {
 
   return (
     <div className="flex flex-col h-full max-w-3xl mx-auto">
-      {/* Theme Toggle and Controls */}
-      <div className="flex items-center justify-end px-4 py-2">
-        <button
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          aria-label="Toggle theme"
-        >
-          {theme === 'dark' ? (
-            <Sun className="h-5 w-5 text-yellow-300" />
-          ) : (
-            <Moon className="h-5 w-5 text-gray-700" />
-          )}
-        </button>
-      </div>
-      
       {/* Include the ProactiveEngagement component */}
       <ProactiveEngagement onInitiateConversation={handleProactiveMessage} />
       
@@ -298,6 +280,19 @@ export default function ChatInterface() {
       <div className="p-4 border-t dark:border-gray-700">
         <div className="flex justify-between items-center mb-3">
           <div>
+            <button
+              onClick={() => {
+                setMessages(initialMessages);
+                setConversationId(undefined);
+                prevMessageLengthRef.current = initialMessages.length;
+                if (user) {
+                  saveMessageToFirebase(initialMessages);
+                }
+              }}
+              className="text-xs text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
+            >
+              New Chat
+            </button>
           </div>
           <button
             onClick={handleClearHistory}

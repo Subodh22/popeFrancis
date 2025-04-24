@@ -24,7 +24,17 @@ interface AvatarImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 }
 
 export function AvatarImage({ src, alt = "", ...props }: AvatarImageProps) {
-  return <img src={src} alt={alt} className="h-full w-full object-cover" {...props} />;
+  return (
+    <img 
+      src={src} 
+      alt={alt} 
+      className="h-full w-full object-cover object-center" 
+      {...props}
+      onError={(e) => {
+        e.currentTarget.style.display = 'none';
+      }}
+    />
+  );
 }
 
 interface AvatarFallbackProps extends React.HTMLAttributes<HTMLDivElement> {
