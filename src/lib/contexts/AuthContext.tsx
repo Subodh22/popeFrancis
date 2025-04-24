@@ -1,20 +1,16 @@
 "use client";
 
 import React, { createContext, useEffect, useState } from "react";
+import { User } from "firebase/auth";
+import { auth } from "@/lib/firebase/firebase";
+import { signInWithGoogle as firebaseSignInWithGoogle, logoutUser } from "@/lib/firebase/firebaseUtils";
 
-// Local mock user interface that mimics Firebase User structure
-interface LocalUser {
-  uid: string;
-  displayName: string | null;
-  email: string | null;
-  photoURL: string | null;
-}
-
-interface AuthContextType {
-  user: LocalUser | null;
+export interface AuthContextType {
+  user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  authError: string | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -22,70 +18,83 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signInWithGoogle: async () => {},
   signOut: async () => {},
+  authError: null,
 });
 
-const LOCAL_STORAGE_KEY = 'pope_francis_user';
-
-// Random names for mock users
-const RANDOM_NAMES = [
-  'John Doe', 'Jane Smith', 'Alex Johnson', 'Sam Wilson', 
-  'Maria Garcia', 'Tao Chen', 'Fatima Ali', 'David Kim'
-];
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<LocalUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
-  // Load user from localStorage on initial render
+  // Set up auth state listener
   useEffect(() => {
-    const savedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
+    let unsubscribed = false;
     
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (e) {
-        console.error('Error parsing saved user:', e);
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (unsubscribed) return;
+      
+      if (authUser) {
+        // User is signed in
+        setUser(authUser);
+        setAuthError(null);
+      } else {
+        // User is signed out
+        setUser(null);
       }
-    }
-    
-    setLoading(false);
+      
+      // Set loading to false after a maximum of 3 seconds
+      setTimeout(() => {
+        if (!unsubscribed) {
+          setLoading(false);
+        }
+      }, 3000);
+    }, (error) => {
+      console.error("Auth state error:", error);
+      setAuthError("Authentication error. Chat will continue without saving history.");
+      setLoading(false);
+    });
+
+    // Set a timeout to ensure loading state doesn't hang indefinitely
+    const loadingTimeout = setTimeout(() => {
+      if (!unsubscribed) {
+        setLoading(false);
+      }
+    }, 5000);
+
+    // Cleanup subscription on unmount
+    return () => {
+      unsubscribed = true;
+      clearTimeout(loadingTimeout);
+      unsubscribe();
+    };
   }, []);
 
-  // Mock Google sign-in function
+  // Firebase Google sign-in function
   const signInWithGoogle = async () => {
     try {
-      // Generate a mock user with random data
-      const randomName = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
-      const randomId = Math.random().toString(36).substring(2, 15);
-      
-      const mockUser: LocalUser = {
-        uid: `user_${randomId}`,
-        displayName: randomName,
-        email: `${randomName.toLowerCase().replace(' ', '.')}@example.com`,
-        photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(randomName)}&background=random`,
-      };
-      
-      // Save to localStorage
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mockUser));
-      setUser(mockUser);
-      
+      setAuthError(null);
+      const user = await firebaseSignInWithGoogle();
+      if (!user) {
+        // User cancelled or auth failed silently
+        setAuthError("Sign-in was cancelled or failed. You can still use the chat without an account.");
+      }
     } catch (error) {
-      console.error("Error signing in", error);
+      console.error("Error signing in with Google", error);
+      setAuthError("Failed to sign in. Please try again later.");
     }
   };
 
   const signOutUser = async () => {
     try {
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-      setUser(null);
+      await logoutUser();
     } catch (error) {
       console.error("Error signing out", error);
+      setAuthError("Failed to sign out. Please try again.");
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut: signOutUser }}>
+    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut: signOutUser, authError }}>
       {children}
     </AuthContext.Provider>
   );
