@@ -51,6 +51,22 @@ export default function ChatInterface() {
   const RATE_LIMIT_THRESHOLD = 50; // Number of messages before rate limiting
   const RATE_LIMIT_RESET_TIME = 1000 * 60 * 10; // 10 minutes in milliseconds
 
+  // Define smoothScrollToBottom function first
+  const smoothScrollToBottom = useCallback(() => {
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+
+    scrollTimeoutRef.current = setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end' 
+        });
+      }
+    }, 100);
+  }, []);
+
   // Check for rate limiting
   const checkRateLimit = useCallback(() => {
     if (messageCount > RATE_LIMIT_THRESHOLD && !isRateLimited) {
@@ -65,7 +81,7 @@ export default function ChatInterface() {
       return true;
     }
     return false;
-  }, [messageCount, isRateLimited]);
+  }, [messageCount, isRateLimited, RATE_LIMIT_RESET_TIME]);
 
   const {
     messages,
@@ -136,7 +152,7 @@ export default function ChatInterface() {
     if (messages.length > 0) {
       localChat.setMessages(messages);
     }
-  }, [messages, localChat]);
+  }, [messages, localChat, smoothScrollToBottom]);
 
   // Track loading state for typing indicator
   useEffect(() => {
@@ -145,21 +161,6 @@ export default function ChatInterface() {
       setIsTyping(isLoading);
     }
   }, [isLoading]);
-
-  const smoothScrollToBottom = useCallback(() => {
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
-    }
-
-    scrollTimeoutRef.current = setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end' 
-        });
-      }
-    }, 100);
-  }, []);
 
   // Initial load effect
   useEffect(() => {
