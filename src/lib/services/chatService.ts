@@ -43,8 +43,17 @@ export async function saveConversation(userId: string, messages: Message[], conv
 export async function getUserConversations(userId: string): Promise<(ConversationData & { id: string })[]> {
   const allConversations = await getDocuments(COLLECTION_NAME);
   return allConversations
-    .filter(conv => conv.userId === userId)
-    .sort((a, b) => b.updatedAt - a.updatedAt) as (ConversationData & { id: string })[];
+    .filter(conv => {
+      // Cast to any/unknown first to avoid type errors
+      const typedConv = conv as unknown as ConversationData & { id: string };
+      return typedConv.userId === userId;
+    })
+    .sort((a, b) => {
+      // Cast to any/unknown first to avoid type errors
+      const typedA = a as unknown as ConversationData;
+      const typedB = b as unknown as ConversationData;
+      return typedB.updatedAt - typedA.updatedAt;
+    }) as (ConversationData & { id: string })[];
 }
 
 /**

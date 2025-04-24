@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function UserProfile() {
   const { user, loading, signInWithGoogle, signOut } = useAuth();
@@ -39,9 +40,11 @@ export default function UserProfile() {
       >
         {user.photoURL ? (
           <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-200">
-            <img 
+            <Image 
               src={user.photoURL}
               alt={user.displayName || "User"}
+              width={32}
+              height={32}
               className="w-full h-full object-cover"
             />
           </div>

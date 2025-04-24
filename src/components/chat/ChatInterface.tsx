@@ -71,6 +71,22 @@ export default function ChatInterface() {
 
   const [isTyping, setIsTyping] = useState(false);
 
+  // Define smoothScrollToBottom before it's used in useEffect
+  const smoothScrollToBottom = useCallback(() => {
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+
+    scrollTimeoutRef.current = setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end' 
+        });
+      }
+    }, 100);
+  }, []);
+
   // Track message changes for scrolling
   useEffect(() => {
     const currentMessagesLength = messages.length;
@@ -90,29 +106,14 @@ export default function ChatInterface() {
     }
     
     prevMessageLengthRef.current = currentMessagesLength;
-  }, [messages]);
+  }, [messages, smoothScrollToBottom]);
 
   // Track loading state for typing indicator
   useEffect(() => {
     setIsTyping(isLoading);
   }, [isLoading]);
 
-  const smoothScrollToBottom = useCallback(() => {
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
-    }
-
-    scrollTimeoutRef.current = setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end' 
-        });
-      }
-    }, 100);
-  }, []);
-
-  // Save messages to Firebase
+  // Define saveMessageToFirebase before it's used in useEffect
   const saveMessageToFirebase = async (messagesToSave: Message[]) => {
     if (!user) return;
     
@@ -162,7 +163,7 @@ export default function ChatInterface() {
     };
     
     loadConversation();
-  }, [user, authLoading, setMessages]);
+  }, [user, authLoading, setMessages, initialMessages, saveMessageToFirebase]);
 
   // Handle proactive conversation initiation
   const handleProactiveMessage = (content: string) => {
@@ -226,7 +227,7 @@ export default function ChatInterface() {
     
     // Save to Firebase
     saveMessageToFirebase(messages);
-  }, [messages, loading, authLoading, user]);
+  }, [messages, loading, authLoading, user, saveMessageToFirebase]);
 
   // If still loading authentication, show loading spinner
   if (authLoading || loading) {
