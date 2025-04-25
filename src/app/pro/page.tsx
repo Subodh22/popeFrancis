@@ -19,12 +19,7 @@ export default function ProPage() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Link 
-              href="/contact"
-              className="px-4 py-1.5 bg-white dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors shadow-sm border border-gray-200 dark:border-gray-600"
-            >
-              Contact
-            </Link>
+            
             <div className="px-4 py-1.5 bg-gradient-to-r from-yellow-600 to-yellow-700 text-white font-bold rounded-full shadow-sm flex items-center">
               <span className="mr-1">⭐</span> Pro
             </div>
