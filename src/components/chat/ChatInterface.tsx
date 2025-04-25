@@ -154,14 +154,6 @@ export default function ChatInterface() {
     }
   }, [messages, localChat, smoothScrollToBottom]);
 
-  // Track loading state for typing indicator
-  useEffect(() => {
-    if (isLoading !== undefined) {
-      console.log("Setting isTyping based on isLoading:", isLoading);
-      setIsTyping(isLoading);
-    }
-  }, [isLoading]);
-
   // Initial load effect
   useEffect(() => {
     // After a short delay, set loading to false
@@ -357,7 +349,7 @@ export default function ChatInterface() {
           input={input}
           handleInputChange={handleInputChange}
           handleSubmit={submitMessage}
-          isLoading={isLoading || isTyping}
+          isLoading={isLoading}
         />
       </div>
     </div>
