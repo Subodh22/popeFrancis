@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Message } from 'ai';
 
 export function useLocalChat(initialMessages: Message[] = []) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [conversationId, setConversationId] = useState<string | undefined>(undefined);
+  const initialLoadDone = useRef(false);
   
   // Load messages from sessionStorage on initial render
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || initialLoadDone.current) return;
     
     try {
       // Generate a session ID if none exists
@@ -29,21 +30,15 @@ export function useLocalChat(initialMessages: Message[] = []) {
         setMessages(initialMessages);
         sessionStorage.setItem(`chat_${sessionId}`, JSON.stringify(initialMessages));
       }
+      
+      initialLoadDone.current = true;
     } catch (error) {
       console.error('Error loading chat from session storage:', error);
     }
   }, [initialMessages]);
   
-  // Save messages to sessionStorage whenever they change
-  useEffect(() => {
-    if (typeof window === 'undefined' || !conversationId || messages.length === 0) return;
-    
-    try {
-      sessionStorage.setItem(`chat_${conversationId}`, JSON.stringify(messages));
-    } catch (error) {
-      console.error('Error saving chat to session storage:', error);
-    }
-  }, [messages, conversationId]);
+  // We've removed the save effect to avoid circular updates
+  // The parent component will handle saving to storage
   
   // Clear current conversation
   const clearConversation = useCallback(() => {

@@ -148,11 +148,25 @@ export default function ChatInterface() {
     
     prevMessageLengthRef.current = currentMessagesLength;
     
-    // Update local storage with latest messages
-    if (messages.length > 0) {
-      localChat.setMessages(messages);
-    }
-  }, [messages, localChat, smoothScrollToBottom]);
+  }, [messages, smoothScrollToBottom]);
+
+  // Debounced update to local storage
+  useEffect(() => {
+    const updateLocalStorageDebounced = setTimeout(() => {
+      if (messages.length > 0 && !isLoading) {
+        try {
+          // Use session storage directly instead of going through the hook
+          if (localChat.conversationId) {
+            sessionStorage.setItem(`chat_${localChat.conversationId}`, JSON.stringify(messages));
+          }
+        } catch (error) {
+          console.error('Error saving to session storage:', error);
+        }
+      }
+    }, 1000); // 1 second debounce
+    
+    return () => clearTimeout(updateLocalStorageDebounced);
+  }, [messages, isLoading, localChat.conversationId]);
 
   // Initial load effect
   useEffect(() => {
