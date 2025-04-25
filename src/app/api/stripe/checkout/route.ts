@@ -6,10 +6,25 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-03-31.basil', // Keep original API version
 });
 
-export async function POST() {
+export async function POST(req: Request) {
   try {
+    // Get donation amount from request body
+    const body = await req.json();
+    let amount = body.amount || 25; // Default to $25 if not provided
+    
+    // Validate amount
+    if (amount <= 0) {
+      return NextResponse.json(
+        { error: 'Invalid donation amount' },
+        { status: 400 }
+      );
+    }
+    
+    // Convert to cents for Stripe (Stripe uses smallest currency unit)
+    const unitAmount = Math.round(amount * 100);
+    
     // Build absolute URLs
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://pope-francis.vercel.app/';
     const successUrl = `${baseUrl}/pro/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${baseUrl}/pro/cancel`;
     
@@ -25,7 +40,7 @@ export async function POST() {
               description: '100% of profits go to Pope Francis\'s favorite foundation',
               images: ['https://www.vaticannews.va/content/dam/vaticannews/agenzie/images/afp/2022/10/06/09/1665049251361.jpg/_jcr_content/renditions/cq5dam.thumbnail.cropped.1500.844.jpeg'],
             },
-            unit_amount: 2500, // $25.00
+            unit_amount: unitAmount, // Dynamic amount in cents
           },
           quantity: 1,
         },
@@ -37,12 +52,13 @@ export async function POST() {
       billing_address_collection: 'required',
       metadata: {
         product_name: 'Pope Francis Pro',
-        donation_for: 'Pope Francis\'s favorite foundation'
+        donation_for: 'Pope Francis\'s favorite foundation',
+        donation_amount: `$${amount.toFixed(2)}`
       },
       // Add a custom URL to return to from the cancel page
       custom_text: {
         submit: {
-          message: 'Support Pope Francis'
+          message: `Support Pope Francis ($${amount.toFixed(2)})`
         }
       }
     });

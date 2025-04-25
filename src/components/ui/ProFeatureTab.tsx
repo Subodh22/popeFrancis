@@ -3,10 +3,43 @@
 import React, { useState } from 'react';
 import { getStripe } from '@/lib/stripe';
 
+const PRESET_AMOUNTS = [10, 25, 50, 100, 250];
+
 export default function ProFeatureTab() {
   const [isLoading, setIsLoading] = useState(false);
+  const [amount, setAmount] = useState(25);
+  const [customAmount, setCustomAmount] = useState('');
+  const [isCustom, setIsCustom] = useState(false);
+
+  const handlePresetAmountClick = (value: number) => {
+    setAmount(value);
+    setIsCustom(false);
+  };
+
+  const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow numbers and decimals
+    if (/^\d*\.?\d{0,2}$/.test(value)) {
+      setCustomAmount(value);
+      if (value) {
+        setAmount(parseFloat(value));
+      } else {
+        setAmount(0);
+      }
+    }
+  };
+
+  const enableCustomAmount = () => {
+    setIsCustom(true);
+    setAmount(customAmount ? parseFloat(customAmount) : 0);
+  };
 
   const handleSubscribe = async () => {
+    if (amount <= 0) {
+      alert("Please enter a valid donation amount");
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
@@ -16,6 +49,7 @@ export default function ProFeatureTab() {
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ amount }),
       });
       
       const data = await response.json();
@@ -61,9 +95,58 @@ export default function ProFeatureTab() {
         <div className="md:w-2/3 space-y-4">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Pope Francis Pro</h2>
           
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-yellow-600">$25</span>
-            <span className="text-gray-500 dark:text-gray-400">one-time donation</span>
+          <div className="space-y-4">
+            <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium">
+              Choose a donation amount:
+            </label>
+            
+            <div className="flex flex-wrap gap-2">
+              {PRESET_AMOUNTS.map((presetAmount) => (
+                <button
+                  key={presetAmount}
+                  type="button"
+                  onClick={() => handlePresetAmountClick(presetAmount)}
+                  className={`px-4 py-2 rounded-full border ${
+                    amount === presetAmount && !isCustom
+                      ? 'bg-yellow-100 border-yellow-500 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-600 dark:text-yellow-200'
+                      : 'bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  ${presetAmount}
+                </button>
+              ))}
+              
+              <button
+                type="button"
+                onClick={enableCustomAmount}
+                className={`px-4 py-2 rounded-full border ${
+                  isCustom
+                    ? 'bg-yellow-100 border-yellow-500 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-600 dark:text-yellow-200'
+                    : 'bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600'
+                }`}
+              >
+                Custom
+              </button>
+            </div>
+            
+            {isCustom && (
+              <div className="flex items-center mt-3">
+                <span className="text-gray-700 dark:text-gray-300 mr-2">$</span>
+                <input
+                  type="text"
+                  value={customAmount}
+                  onChange={handleCustomAmountChange}
+                  placeholder="Enter amount"
+                  className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:focus:ring-yellow-600"
+                  autoFocus
+                />
+              </div>
+            )}
+            
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold text-yellow-600">${amount}</span>
+              <span className="text-gray-500 dark:text-gray-400">one-time donation</span>
+            </div>
           </div>
           
           <p className="text-gray-600 dark:text-gray-300">
@@ -81,7 +164,7 @@ export default function ProFeatureTab() {
           
           <button
             onClick={handleSubscribe}
-            disabled={isLoading}
+            disabled={isLoading || amount <= 0}
             className="mt-4 w-full py-3 px-4 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-lg shadow transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isLoading ? (
@@ -93,7 +176,7 @@ export default function ProFeatureTab() {
                 Processing...
               </span>
             ) : (
-              "Support Pope Francis"
+              `Donate $${amount}`
             )}
           </button>
         </div>

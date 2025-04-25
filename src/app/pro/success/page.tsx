@@ -8,16 +8,33 @@ import Header from '@/components/ui/Header';
 function SuccessContent() {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
+  const [amount, setAmount] = useState<string | null>(null);
   const sessionId = searchParams ? searchParams.get('session_id') : null;
 
   useEffect(() => {
-    // You would typically verify the payment was successful here
-    // by calling your backend to check the session status
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
+    // Fetch session details to get the amount
+    const fetchSessionDetails = async () => {
+      if (sessionId) {
+        try {
+          const response = await fetch(`/api/stripe/session?id=${sessionId}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.amount) {
+              setAmount(data.amount);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching session details:', error);
+        }
+      }
+      
+      // Show success page even if fetch fails
+      setTimeout(() => {
+        setLoading(false);
+      }, 1500);
+    };
 
-    return () => clearTimeout(timer);
+    fetchSessionDetails();
   }, [sessionId]);
 
   return (
@@ -36,6 +53,12 @@ function SuccessContent() {
           </div>
           
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Thank You!</h1>
+          
+          {amount && (
+            <div className="text-lg font-medium text-yellow-600 mb-4">
+              Your donation of {amount} has been received.
+            </div>
+          )}
           
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             Your donation to Pope Francis&apos;s favorite foundation has been received. 
