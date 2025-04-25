@@ -1,71 +1,107 @@
 "use client";
 
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
-function SuccessContent() {
-  const searchParams = useSearchParams();
-  const [loading, setLoading] = useState(true);
-  const sessionId = searchParams ? searchParams.get('session_id') : null;
-
-  useEffect(() => {
-    // You would typically verify the payment was successful here
-    // by calling your backend to check the session status
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, [sessionId]);
-
+// Loading component shown while fetching session data
+function SuccessLoading() {
   return (
-    <div className="container mx-auto px-4 py-16 text-center">
-      {loading ? (
-        <div className="flex flex-col items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500 mb-4"></div>
-          <p className="text-gray-600">Confirming your donation...</p>
-        </div>
-      ) : (
-        <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-          <div className="w-16 h-16 mx-auto bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-600 dark:text-green-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-          
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Thank You!</h1>
-          
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Your donation to Pope Francis&apos;s favorite foundation has been received. 
-            Your support will help make a difference in many lives.
-          </p>
-          
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-100 dark:border-yellow-800 mb-6">
-            <p className="text-yellow-800 dark:text-yellow-200 text-sm">
-              &quot;True wealth is not measured by what we have, but by what we give.&quot; - Pope Francis
-            </p>
-          </div>
-          
-          <Link 
-            href="/"
-            className="inline-block py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow transition-colors"
-          >
-            Return to Chat
-          </Link>
-        </div>
-      )}
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
+      <div className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin mb-4"></div>
+      <h1 className="text-2xl font-bold mb-4">Processing your donation...</h1>
+      <p className="text-gray-600 text-center">Please wait while we confirm your payment.</p>
     </div>
   );
 }
 
-// Loading fallback component
-function SuccessLoading() {
+// Component that displays success content after fetching session data
+function SuccessContent() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams?.get('session_id');
+  const customerEmail = searchParams?.get('email');
+  const customerName = searchParams?.get('name');
+  
+  const [loading, setLoading] = useState(true);
+  const [emailSent, setEmailSent] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!sessionId) {
+      setError('Invalid session ID');
+      setLoading(false);
+      return;
+    }
+
+    // Send confirmation email if we have an email address
+    const sendConfirmationEmail = async () => {
+      if (customerEmail) {
+        try {
+          const amount = '$25.00'; // Fixed amount for our product
+          const name = customerName || 'Valued Supporter';
+          
+          // Call our test webhook endpoint with the customer's email
+          const emailResponse = await fetch(
+            `/api/stripe/test-webhook?email=${encodeURIComponent(customerEmail)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amount)}`
+          );
+          
+          if (emailResponse.ok) {
+            setEmailSent(true);
+          } else {
+            console.error('Failed to send confirmation email');
+          }
+        } catch (emailError) {
+          console.error('Error sending confirmation email:', emailError);
+        }
+      }
+      
+      setLoading(false);
+    };
+
+    sendConfirmationEmail();
+  }, [sessionId, customerEmail, customerName]);
+
+  if (loading) {
+    return <SuccessLoading />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
+        <h1 className="text-2xl font-bold mb-4 text-red-500">Error</h1>
+        <p className="text-gray-600 text-center mb-6">{error}</p>
+        <Link href="/" className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+          Return to Home
+        </Link>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto px-4 py-16 text-center">
-      <div className="flex flex-col items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500 mb-4"></div>
-        <p className="text-gray-600">Loading payment details...</p>
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
+      <div className="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <h1 className="text-3xl font-bold mb-4">Thank You for Your Donation!</h1>
+      <p className="text-gray-600 text-center mb-2">Your payment has been processed successfully.</p>
+      <p className="text-gray-600 text-center mb-6">100% of profits go to Pope Francis&apos;s favorite foundation.</p>
+      
+      {emailSent && customerEmail && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded mb-6 max-w-md text-center">
+          We&apos;ve sent a confirmation email to {customerEmail}. Please check your inbox!
+        </div>
+      )}
+      
+      <div className="flex flex-col md:flex-row gap-4 mt-2">
+        <Link href="/" className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-center">
+          Return to Chat
+        </Link>
+        <Link href="/pro" className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center">
+          Learn More About Pro
+        </Link>
       </div>
     </div>
   );
@@ -73,8 +109,10 @@ function SuccessLoading() {
 
 export default function SuccessPage() {
   return (
-    <Suspense fallback={<SuccessLoading />}>
-      <SuccessContent />
-    </Suspense>
+    <div className="container mx-auto py-12">
+      <Suspense fallback={<SuccessLoading />}>
+        <SuccessContent />
+      </Suspense>
+    </div>
   );
 } 

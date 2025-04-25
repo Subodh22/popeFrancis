@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 
 // Initialize Stripe with the secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-03-31.basil', // Use the latest API version
+  apiVersion: '2025-03-31.basil', // Keep original API version
 });
 
 export async function POST() {
@@ -26,10 +26,22 @@ export async function POST() {
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pro/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pro/success?session_id={CHECKOUT_SESSION_ID}&email={CUSTOMER_EMAIL}&name={CUSTOMER_NAME}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pro/cancel`,
+      // Essential options for email collection
+      billing_address_collection: 'required',
+      // Always collect customer email
+      customer_email: undefined, // This will be collected during checkout
+      // Always create a customer
+      customer_creation: 'always',
+      metadata: {
+        product_name: 'Pope Francis Pro',
+        donation_for: 'Pope Francis\'s favorite foundation',
+        email_sent: 'false', // Will be updated after email is sent
+      }
     });
 
+    console.log("Created checkout session:", session.id);
     return NextResponse.json({ sessionId: session.id });
   } catch (error) {
     console.error('Error creating checkout session:', error);
