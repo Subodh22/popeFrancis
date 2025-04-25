@@ -279,7 +279,7 @@ export default function ChatInterface() {
                   {authError}
                 </div>
               )}
-              <LoginPrompt />
+              <LoginPrompt compact={true} />
             </div>
           </div>
         </div>
@@ -288,7 +288,7 @@ export default function ChatInterface() {
   }
 
   return (
-    <div className="flex flex-col h-full max-w-3xl mx-auto">
+    <div className="flex flex-col h-full max-w-3xl mx-auto pb-0">
       {/* Include the ProactiveEngagement component */}
       <ProactiveEngagement onInitiateConversation={handleProactiveMessage} />
       

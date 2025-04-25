@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { AuthProvider } from "@/lib/contexts/AuthContext";
 import { ThemeProvider } from "@/lib/providers/ThemeProvider";
+import Footer from "@/components/ui/Footer";
 
 export const metadata: Metadata = {
   title: "Pope Francis Conversational AI",
@@ -18,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-gray-50 dark:bg-gray-900">
+      <body className="bg-gray-50 dark:bg-gray-900 flex flex-col min-h-screen">
         <AuthProvider>
           <ThemeProvider
             attribute="class"
@@ -26,7 +27,10 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
           </ThemeProvider>
         </AuthProvider>
       </body>
