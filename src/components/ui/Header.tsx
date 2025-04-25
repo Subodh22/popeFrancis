@@ -18,12 +18,6 @@ export default function Header() {
         </div>
         <div className="flex items-center gap-4">
           <Link 
-            href="/contact"
-            className="px-4 py-1.5 bg-white dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors shadow-sm border border-gray-200 dark:border-gray-600"
-          >
-            Contact
-          </Link>
-          <Link 
             href="/pro"
             className="px-4 py-1.5 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-bold rounded-full hover:from-yellow-600 hover:to-yellow-700 transition-colors shadow-sm flex items-center"
           >
