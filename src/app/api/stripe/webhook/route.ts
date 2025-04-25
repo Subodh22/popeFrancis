@@ -10,12 +10,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 // Configure email transporter
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: 587,
-  secure: false,
+  service: process.env.EMAIL_SERVICE || 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 
@@ -115,11 +113,7 @@ export async function POST(req: Request) {
     const headersList = headers();
     const signature = headersList.get('stripe-signature') as string;
 
-    // For testing purposes, we'll log that we received a request
-    console.log("Webhook request received");
-
     if (!signature || !webhookSecret) {
-      console.error("Missing signature or webhook secret");
       return NextResponse.json(
         { error: 'Missing signature or webhook secret' },
         { status: 400 }
@@ -130,7 +124,6 @@ export async function POST(req: Request) {
     let event: Stripe.Event;
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-      console.log(`Webhook event received: ${event.type}`);
     } catch (err: any) {
       console.error(`Webhook signature verification failed: ${err.message}`);
       return NextResponse.json(
@@ -142,30 +135,23 @@ export async function POST(req: Request) {
     // Handle specific events
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
-      console.log("Checkout session completed:", session.id);
       
       // Get customer details
       const customerEmail = session.customer_details?.email;
       const customerName = session.customer_details?.name || 'Valued Supporter';
       const amount = `$${(session.amount_total! / 100).toFixed(2)}`;
       
-      console.log(`Customer email: ${customerEmail}, Name: ${customerName}, Amount: ${amount}`);
-      
       if (customerEmail) {
         // Send a beautiful thank you email
         try {
-          // For development/testing, we'll use a manual sending approach
-          console.log(`Attempting to send email to ${customerEmail}`);
-          
-          // Manual email for testing
-          const testEmailResult = await transporter.sendMail({
-            from: `"Pope Francis" <${process.env.EMAIL_FROM}>`,
+          await transporter.sendMail({
+            from: `"Pope Francis" <${process.env.EMAIL_USER}>`,
             to: customerEmail,
             subject: 'Thank You for Your Generous Donation',
             html: createEmailHTML(customerName, amount),
           });
           
-          console.log(`Confirmation email sent to ${customerEmail}`, testEmailResult);
+          console.log(`Confirmation email sent to ${customerEmail}`);
         } catch (emailError) {
           console.error('Error sending confirmation email:', emailError);
         }
