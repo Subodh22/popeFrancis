@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function SuccessPage() {
+function SuccessContent() {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const sessionId = searchParams ? searchParams.get('session_id') : null;
@@ -56,5 +56,25 @@ export default function SuccessPage() {
         </div>
       )}
     </div>
+  );
+}
+
+// Loading fallback component
+function SuccessLoading() {
+  return (
+    <div className="container mx-auto px-4 py-16 text-center">
+      <div className="flex flex-col items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500 mb-4"></div>
+        <p className="text-gray-600">Loading payment details...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<SuccessLoading />}>
+      <SuccessContent />
+    </Suspense>
   );
 } 
