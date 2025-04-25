@@ -8,6 +8,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST() {
   try {
+    // Build absolute URLs
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const successUrl = `${baseUrl}/pro/success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${baseUrl}/pro/cancel`;
+    
     // Create a checkout session with Stripe
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -26,13 +31,19 @@ export async function POST() {
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pro/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pro/cancel`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       // Essential options for email collection
       billing_address_collection: 'required',
       metadata: {
         product_name: 'Pope Francis Pro',
         donation_for: 'Pope Francis\'s favorite foundation'
+      },
+      // Add a custom URL to return to from the cancel page
+      custom_text: {
+        submit: {
+          message: 'Support Pope Francis'
+        }
       }
     });
 

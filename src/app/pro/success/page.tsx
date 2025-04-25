@@ -3,6 +3,7 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Header from '@/components/ui/Header';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
@@ -20,7 +21,7 @@ function SuccessContent() {
   }, [sessionId]);
 
   return (
-    <div className="container mx-auto px-4 py-16 text-center">
+    <div className="container mx-auto flex-1 px-4 py-16 text-center">
       {loading ? (
         <div className="flex flex-col items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500 mb-4"></div>
@@ -62,7 +63,7 @@ function SuccessContent() {
 // Loading fallback component
 function SuccessLoading() {
   return (
-    <div className="container mx-auto px-4 py-16 text-center">
+    <div className="container mx-auto flex-1 px-4 py-16 text-center">
       <div className="flex flex-col items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500 mb-4"></div>
         <p className="text-gray-600">Loading payment details...</p>
@@ -73,8 +74,15 @@ function SuccessLoading() {
 
 export default function SuccessPage() {
   return (
-    <Suspense fallback={<SuccessLoading />}>
-      <SuccessContent />
-    </Suspense>
+    <main className="flex min-h-screen flex-col bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <Header />
+      <Suspense fallback={<SuccessLoading />}>
+        <SuccessContent />
+      </Suspense>
+      <footer className="bg-gradient-to-r from-yellow-100 to-white dark:from-gray-800 dark:to-gray-900 py-3 text-center text-sm text-gray-600 dark:text-gray-400 border-t dark:border-gray-700">
+        <p className="font-medium">This is a simulated experience for spiritual and educational purposes.</p>
+        <p className="text-xs mt-1 text-gray-500 dark:text-gray-500">Not affiliated with the Vatican or the Holy See.</p>
+      </footer>
+    </main>
   );
 } 
