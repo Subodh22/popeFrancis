@@ -51,12 +51,7 @@ export default function LoginPrompt({ compact = false }: LoginPromptProps) {
           </svg>
           Sign in with Google
         </button>
-        <button
-          onClick={handleSkipAuth}
-          className="w-full px-4 py-2 text-xs text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          Skip login (chat history won&apos;t be saved)
-        </button>
+        
       </div>
     );
   }
@@ -96,12 +91,7 @@ export default function LoginPrompt({ compact = false }: LoginPromptProps) {
           Sign in with Google
         </button>
         
-        <button
-          onClick={handleSkipAuth}
-          className="w-full px-4 py-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-300 rounded-md"
-        >
-          Skip login (chat history won&apos;t be saved)
-        </button>
+         
       </div>
     </div>
   );
