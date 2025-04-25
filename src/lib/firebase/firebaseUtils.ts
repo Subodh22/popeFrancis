@@ -22,9 +22,21 @@ export const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     return result.user;
-  } catch (error) {
-    console.error("Error signing in with Google", error);
-    throw error;
+  } catch (error: any) {
+    // Handle specific error codes more gracefully
+    if (error.code === 'auth/popup-closed-by-user') {
+      console.log('Sign in cancelled by user');
+      // This is expected behavior, don't throw
+      return null;
+    } else if (error.code === 'auth/popup-blocked') {
+      console.error('Popup was blocked by the browser. Please allow popups for authentication.');
+      alert('Popup was blocked by the browser. Please allow popups for this site to sign in.');
+      return null;
+    } else {
+      console.error("Error signing in with Google:", error);
+      // Don't throw the error, as this would break the auth flow
+      return null;
+    }
   }
 };
 

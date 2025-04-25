@@ -1,6 +1,8 @@
 import ChatInterface from "@/components/chat/ChatInterface";
+import Footer from "@/components/ui/Footer";
 import PopeImage from "@/components/ui/PopeImage";
 import UserProfile from "@/components/user/UserProfile";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -14,7 +16,15 @@ export default function Home() {
               <p className="text-sm text-yellow-700 dark:text-yellow-500 font-medium">Spiritual Guidance</p>
             </div>
           </div>
-          <UserProfile />
+          <div className="flex items-center gap-4">
+            <Link 
+              href="/pro"
+              className="px-4 py-1.5 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-bold rounded-full hover:from-yellow-600 hover:to-yellow-700 transition-colors shadow-sm flex items-center"
+            >
+              <span className="mr-1">⭐</span> Pro
+            </Link>
+            <UserProfile />
+          </div>
         </div>
       </header>
       
@@ -27,6 +37,10 @@ export default function Home() {
       <footer className="bg-gradient-to-r from-yellow-100 to-white dark:from-gray-800 dark:to-gray-900 py-3 text-center text-sm text-gray-600 dark:text-gray-400 border-t dark:border-gray-700">
         <p className="font-medium">This is a simulated conversation with Pope Francis for spiritual and educational purposes.</p>
         <p className="text-xs mt-1 text-gray-500 dark:text-gray-500">Not affiliated with the Vatican or the Holy See.</p>
+        
+        <p className="text-xs mt-1 text-gray-500 dark:text-gray-500"> This conversation is private between you and Pope Francis and is not recorded outside of your device.
+        </p>
+       
       </footer>
     </main>
   );
