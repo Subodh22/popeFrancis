@@ -1,12 +1,19 @@
-import { loadStripe, Stripe } from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import type { Stripe as StripeClient } from '@stripe/stripe-js';
+import { Stripe as StripeServer } from 'stripe';
 
-// Singleton pattern to load Stripe just once
-let stripePromise: Promise<Stripe | null>;
+// Singleton pattern to load Stripe just once (client-side)
+let stripePromise: Promise<StripeClient | null>;
 
-// Initialize Stripe with publishable key
+// Initialize Stripe with publishable key (client-side)
 export const getStripe = () => {
   if (!stripePromise) {
     stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
   }
   return stripePromise;
 }; 
+
+// Server-side Stripe instance for API routes
+export const stripe = new StripeServer(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2025-03-31.basil', // Use the required API version
+}); 
