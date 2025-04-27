@@ -35,9 +35,8 @@ export async function POST(request: Request) {
               price_data: {
                 currency: 'usd',
                 product_data: {
-                  name: 'Monthly Donation to Caritas Internationalis',
-                  description: 'Your recurring donation supports Caritas Internationalis humanitarian efforts worldwide',
-                  images: ['https://i.imgur.com/0qFbHWH.jpg'],
+                  name: 'Monthly Support - Caritas Internationalis',
+                  description: '100% of profits from your contribution support Caritas Internationalis charitable works',
                 },
                 unit_amount: amountInCents,
                 recurring: {
@@ -62,9 +61,8 @@ export async function POST(request: Request) {
               price_data: {
                 currency: 'usd',
                 product_data: {
-                  name: 'One-time Donation to Caritas Internationalis',
-                  description: 'Your donation supports Caritas Internationalis humanitarian efforts worldwide',
-                  images: ['https://i.imgur.com/0qFbHWH.jpg'],
+                  name: 'Support - Caritas Internationalis',
+                  description: '100% of profits from your contribution support Caritas Internationalis charitable works',
                 },
                 unit_amount: amountInCents,
               },

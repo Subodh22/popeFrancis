@@ -91,14 +91,6 @@ export default function ProFeatureTab() {
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-4xl mx-auto my-8">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-1">
-          <div className="mb-6">
-            <img 
-              src="https://i.imgur.com/0qFbHWH.jpg" 
-              alt="Caritas Internationalis" 
-              className="rounded-lg shadow-md w-full"
-            />
-          </div>
-          
           <div className="prose dark:prose-invert">
             <h3 className="text-xl font-bold text-gray-800 dark:text-white">We are proudly:</h3>
             <ul className="list-disc pl-5">
@@ -110,14 +102,18 @@ export default function ProFeatureTab() {
             <p className="text-gray-700 dark:text-gray-300 mt-4">
               Thousands of people like you help us support those in need worldwide. 
               We rely on donations to carry out our mission of alleviating suffering 
-              and providing assistance to the poor. 
-              <span className="font-bold block mt-2">Will you give today?</span>
+              and providing assistance to the poor.
             </p>
-          </div>
-          
-          <div className="mt-6 flex items-center space-x-4">
-            <img src="https://i.imgur.com/bW9JNt6.png" alt="Charity Navigator" className="h-16" />
-            <img src="https://i.imgur.com/R5BgUl5.png" alt="GuideStar Gold Seal" className="h-16" />
+            
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-100 dark:border-yellow-800 mt-4">
+              <p className="text-yellow-800 dark:text-yellow-200 font-medium">
+                100% of profits from your contribution will be donated to charitable works.
+              </p>
+            </div>
+            
+            <p className="text-gray-700 dark:text-gray-300 font-bold mt-4">
+              Will you give today?
+            </p>
           </div>
         </div>
         
@@ -186,6 +182,9 @@ export default function ProFeatureTab() {
               cherished humanitarian organizations, focusing on emergency relief, healthcare, 
               and sustainable development.
             </p>
+            <p className="text-yellow-700 dark:text-yellow-300 font-medium mt-2">
+              100% of our profits from your donation will directly support these charitable works.
+            </p>
           </div>
           
           <div className="space-y-4">
@@ -243,7 +242,8 @@ export default function ProFeatureTab() {
           </p>
           
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Contributions go to support Caritas Internationalis, a registered non-profit organization. 
+            Contributions will be used to fund charitable causes through Caritas Internationalis.
+            100% of profits from donations are directed to charitable work.
             Donations are tax-deductible to the fullest extent permitted by law.
           </p>
         </div>

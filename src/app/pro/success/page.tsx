@@ -56,13 +56,13 @@ function SuccessContent() {
           
           {amount && (
             <div className="text-lg font-medium text-yellow-600 mb-4">
-              Your donation of {amount} has been received.
+              Your contribution of {amount} has been received.
             </div>
           )}
           
           <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Your donation to Pope Francis&apos;s favorite foundation has been received. 
-            Your support will help make a difference in many lives.
+            100% of profits from your contribution will go to Caritas Internationalis. 
+            Your generosity will help support humanitarian efforts around the world.
           </p>
           
           <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-100 dark:border-yellow-800 mb-6">
