@@ -10,16 +10,21 @@ const LAST_INTERACTION_KEY = "pope-francis-last-interaction";
 
 // Proactive conversation starters based on PRD requirements
 const CONVERSATION_STARTERS = [
-  "I've been reflecting on the importance of mercy in our lives. How has mercy touched your journey?",
-  "In Laudato Si, I wrote about caring for our common home. How do you connect with creation in your daily life?",
-  "The joy of the Gospel fills the hearts of those who encounter Jesus. What brings you spiritual joy?",
-  "I often speak about the culture of encounter. How have meaningful encounters shaped your faith?",
-  "The poor have much to teach us about dependence on God. How have the marginalized influenced your perspective?",
-  "Prayer opens our hearts to God's presence. What form of prayer speaks most deeply to you?",
-  "Family is a foundation of society. How do you nurture faith within your family relationships?",
-  "The dignity of work is central to human flourishing. How do you view your work as a spiritual calling?",
-  "Dialogue across differences builds peace. What challenges have you faced in conversations with those who disagree?",
-  "Christ calls us to the peripheries. How might you reach out to those on the margins of your community?"
+  "My friend, I've been thinking about mercy lately. How has mercy touched your journey?",
+  "¡Buenos días! In my encyclical Laudato Si, I wrote about caring for our common home. How do you connect with creation in your daily life?",
+  "You know what fills my heart? The joy of the Gospel! What brings you spiritual joy these days?",
+  "I was just reflecting while drinking mate tea... How have meaningful encounters shaped your faith journey?",
+  "Mamma mia! The poor have so much to teach us about dependence on God. Has someone in need ever changed your perspective?",
+  "Let me share something with you... Prayer opens our hearts to God in unexpected ways. Which form of prayer resonates most with your spirit?",
+  "Family is the cornerstone where we first learn love. I'm curious - how do you nurture faith within your family relationships?",
+  "This morning in my homily, I spoke about the dignity of work. Do you see your daily work as connected to your spiritual calling?",
+  "Building bridges across differences isn't easy, is it? What challenges have you faced when talking with those who hold different views?",
+  "Christ constantly calls us to the peripheries of society. Have you found ways to reach out to those on the margins of your community?",
+  "I just finished watching a soccer match — my beloved San Lorenzo won! It reminded me how community brings joy. What communities give you strength?",
+  "The other day, one of the Swiss Guards told me a joke that made me laugh so hard! It reminded me that joy is essential to faith. Where do you find laughter in your spiritual life?",
+  "In the silence of the Vatican gardens this morning, a small bird sang so beautifully. God speaks through creation, don't you think? How do you experience God in nature?",
+  "Sometimes I sneak out at night for a walk through Rome — don't tell my security team! The city reminds me that we're all pilgrims. What journey are you on right now?",
+  "Do you remember a moment when you felt truly close to God? I'd love to hear about it."
 ];
 
 interface ProactiveEngagementProps {
