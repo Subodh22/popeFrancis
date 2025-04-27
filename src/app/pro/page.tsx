@@ -3,6 +3,7 @@ import ProFeatureTab from '@/components/ui/ProFeatureTab';
 import PopeImage from '@/components/ui/PopeImage';
 import UserProfile from '@/components/user/UserProfile';
 import Link from 'next/link';
+import DonationForm from '@/components/ui/DonationForm';
 
 export default function ProPage() {
   return (
@@ -31,19 +32,17 @@ export default function ProPage() {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-center mb-8">Support Caritas Internationalis</h1>
         
-        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Why Pope Francis Values Caritas Internationalis</h2>
-              
-              <div className="prose dark:prose-invert">
-                <p>
-                  Caritas Internationalis holds a special place in Pope Francis&apos;s heart and ministry. As a confederation of over 160 Catholic relief organizations operating in more than 200 countries, it embodies his vision of a &quot;Church for the poor&quot; and his call to serve those at the margins of society.
-                </p>
-              </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Why Pope Francis Values Caritas Internationalis</h2>
+            
+            <div className="prose dark:prose-invert max-w-none mb-6">
+              <p className="text-gray-700 dark:text-gray-300">
+                Caritas Internationalis holds a special place in Pope Francis&apos;s heart and ministry. As a confederation of over 160 Catholic relief organizations operating in more than 200 countries, it embodies his vision of a &quot;Church for the poor&quot; and his call to serve those at the margins of society.
+              </p>
             </div>
             
-            <div className="flex items-center justify-center bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+            <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
               <blockquote className="border-l-4 border-yellow-500 pl-4 italic">
                 <p className="text-gray-700 dark:text-gray-300">
                   &quot;I encourage Caritas to continue its important work of responding to emergencies and promoting integral human development... Caritas is the caress of the Church to her people.&quot;
@@ -52,9 +51,9 @@ export default function ProPage() {
               </blockquote>
             </div>
           </div>
+          
+          <DonationForm />
         </div>
-        
-        <ProFeatureTab />
       </div>
     </main>
   );
