@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
+import { Stripe } from 'stripe';
 
-// Initialize Stripe with the secret key
+// Initialize Stripe directly in the API route
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-03-31.basil',
 });
@@ -30,18 +30,30 @@ export async function GET(request: Request) {
       );
     }
 
-    // Get the amount from metadata or calculate from line items
+    // Get the donation amount from metadata or calculate from line items
     let amount;
-    if (session.metadata?.donation_amount) {
+    if (session.metadata?.amount) {
+      // Amount stored in metadata (from the new implementation)
+      amount = `$${parseFloat(session.metadata.amount).toFixed(2)}`;
+    } else if (session.metadata?.donation_amount) {
+      // Legacy format (from previous implementation)
       amount = session.metadata.donation_amount;
     } else if (session.amount_total) {
+      // Calculate from total (fallback)
       amount = `$${(session.amount_total / 100).toFixed(2)}`;
+    }
+
+    // Handle recurring vs one-time
+    const isSubscription = session.mode === 'subscription';
+    if (isSubscription) {
+      amount = `${amount}/month`;
     }
 
     return NextResponse.json({ 
       success: true,
       amount: amount || null,
-      customer: session.customer_details?.email || null
+      customer: session.customer_details?.email || null,
+      donationType: session.metadata?.donationType || 'one-time'
     });
   } catch (error) {
     console.error('Error retrieving session:', error);

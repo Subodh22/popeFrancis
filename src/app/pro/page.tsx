@@ -29,7 +29,7 @@ export default function ProPage() {
       </header>
       
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8">Pope Francis Pro</h1>
+        <h1 className="text-3xl font-bold text-center mb-8">Support Caritas Internationalis</h1>
         <ProFeatureTab />
       </div>
     </main>

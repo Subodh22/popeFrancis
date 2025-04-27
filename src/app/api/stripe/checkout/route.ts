@@ -1,73 +1,92 @@
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
+import { Stripe } from 'stripe';
 
-// Initialize Stripe with the secret key
+// Initialize Stripe directly in the API route to ensure server-side only execution
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-03-31.basil', // Keep original API version
+  apiVersion: '2025-03-31.basil',
 });
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    // Get donation amount from request body
-    const body = await req.json();
-    let amount = body.amount || 25; // Default to $25 if not provided
+    const { amount, donationType } = await request.json();
     
-    // Validate amount
-    if (amount <= 0) {
+    if (!amount || isNaN(Number(amount)) || Number(amount) < 1) {
       return NextResponse.json(
-        { error: 'Invalid donation amount' },
+        { error: 'Please provide a valid donation amount' },
         { status: 400 }
       );
     }
-    
-    // Convert to cents for Stripe (Stripe uses smallest currency unit)
-    const unitAmount = Math.round(amount * 100);
-    
-    // Build absolute URLs
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://pope-francis.vercel.app/';
-    const successUrl = `${baseUrl}/pro/success?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${baseUrl}/pro/cancel`;
-    
-    // Create a checkout session with Stripe
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'Pope Francis Pro',
-              description: '100% of profits go to Pope Francis\'s favorite foundation',
-              images: ['https://www.vaticannews.va/content/dam/vaticannews/agenzie/images/afp/2022/10/06/09/1665049251361.jpg/_jcr_content/renditions/cq5dam.thumbnail.cropped.1500.844.jpeg'],
-            },
-            unit_amount: unitAmount, // Dynamic amount in cents
-          },
-          quantity: 1,
-        },
-      ],
-      mode: 'payment',
-      success_url: successUrl,
-      cancel_url: cancelUrl,
-      // Essential options for email collection
-      billing_address_collection: 'required',
-      metadata: {
-        product_name: 'Pope Francis Pro',
-        donation_for: 'Pope Francis\'s favorite foundation',
-        donation_amount: `$${amount.toFixed(2)}`
-      },
-      // Add a custom URL to return to from the cancel page
-      custom_text: {
-        submit: {
-          message: `Support Pope Francis ($${amount.toFixed(2)})`
-        }
-      }
-    });
 
+    // Convert amount to cents
+    const amountInCents = Math.floor(Number(amount) * 100);
+    
+    // Get URL origin
+    const origin = request.headers.get('origin') || 'http://localhost:3000';
+    
+    const isSubscription = donationType === 'monthly';
+    
+    // Create params based on donation type
+    const params = isSubscription
+      ? {
+          payment_method_types: ['card'],
+          mode: 'subscription',
+          line_items: [
+            {
+              price_data: {
+                currency: 'usd',
+                product_data: {
+                  name: 'Monthly Donation to Caritas Internationalis',
+                  description: 'Your recurring donation supports Caritas Internationalis humanitarian efforts worldwide',
+                  images: ['https://i.imgur.com/0qFbHWH.jpg'],
+                },
+                unit_amount: amountInCents,
+                recurring: {
+                  interval: 'month',
+                },
+              },
+              quantity: 1,
+            },
+          ],
+          success_url: `${origin}/pro/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${origin}/pro/cancel`,
+          metadata: {
+            donationType: 'monthly',
+            amount: amount.toString(),
+          },
+        }
+      : {
+          payment_method_types: ['card'],
+          mode: 'payment',
+          line_items: [
+            {
+              price_data: {
+                currency: 'usd',
+                product_data: {
+                  name: 'One-time Donation to Caritas Internationalis',
+                  description: 'Your donation supports Caritas Internationalis humanitarian efforts worldwide',
+                  images: ['https://i.imgur.com/0qFbHWH.jpg'],
+                },
+                unit_amount: amountInCents,
+              },
+              quantity: 1,
+            },
+          ],
+          success_url: `${origin}/pro/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${origin}/pro/cancel`,
+          metadata: {
+            donationType: 'one-time',
+            amount: amount.toString(),
+          },
+        };
+    
+    // Create session
+    const session = await stripe.checkout.sessions.create(params as any);
+    
     return NextResponse.json({ sessionId: session.id });
   } catch (error) {
-    console.error('Error creating checkout session:', error);
+    console.error('Stripe checkout error:', error);
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { error: 'Something went wrong when creating checkout session' },
       { status: 500 }
     );
   }

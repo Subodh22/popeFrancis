@@ -14,6 +14,9 @@ export const getStripe = () => {
 }; 
 
 // Server-side Stripe instance for API routes
-export const stripe = new StripeServer(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-03-31.basil', // Use the required API version
-}); 
+// Only initialize on the server side to avoid errors in the browser
+export const stripe = typeof window === 'undefined' 
+  ? new StripeServer(process.env.STRIPE_SECRET_KEY!, {
+      apiVersion: '2025-03-31.basil', 
+    })
+  : null; 
