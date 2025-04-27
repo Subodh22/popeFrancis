@@ -214,7 +214,6 @@ export default function ProFeatureTab() {
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Contributions will be used to fund charitable causes through Caritas Internationalis.
             100% of profits from donations are directed to charitable work.
-            Donations are tax-deductible to the fullest extent permitted by law.
           </p>
         </div>
       </div>
