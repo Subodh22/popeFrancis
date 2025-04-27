@@ -92,28 +92,11 @@ export default function ProFeatureTab() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-1">
           <div className="prose dark:prose-invert">
-            <h3 className="text-xl font-bold text-gray-800 dark:text-white">We are proudly:</h3>
-            <ul className="list-disc pl-5">
-              <li className="text-gray-700 dark:text-gray-300">Non-profit</li>
-              <li className="text-gray-700 dark:text-gray-300">Faith-based</li>
-              <li className="text-gray-700 dark:text-gray-300">Mission-driven</li>
-            </ul>
-            
-            <p className="text-gray-700 dark:text-gray-300 mt-4">
-              Thousands of people like you help us support those in need worldwide. 
-              We rely on donations to carry out our mission of alleviating suffering 
-              and providing assistance to the poor.
-            </p>
-            
             <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-100 dark:border-yellow-800 mt-4">
               <p className="text-yellow-800 dark:text-yellow-200 font-medium">
                 100% of profits from your contribution will be donated to charitable works.
               </p>
             </div>
-            
-            <p className="text-gray-700 dark:text-gray-300 font-bold mt-4">
-              Will you give today?
-            </p>
           </div>
         </div>
         
@@ -188,57 +171,44 @@ export default function ProFeatureTab() {
           </div>
           
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Choose Payment</h3>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Payment Method</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <button
-                className="flex items-center justify-center py-3 px-4 bg-blue-500 text-white font-bold rounded-md shadow"
-                onClick={handleSubscribe}
-                disabled={isLoading || amount <= 0}
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                  </span>
-                ) : (
-                  <>
-                    <span className="mr-2">Credit/Debit</span>
-                    <div className="flex space-x-1">
-                      <span className="w-8 h-6 bg-white rounded-sm flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="h-4 w-4">
-                          <path fill="#007bff" d="M470.1 231.3s7.6 37.2 9.3 45H446c3.3-8.9 16-43.5 16-43.5-.2.3 3.3-9.1 5.3-14.9l2.8 13.4zM576 80v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V80c0-26.5 21.5-48 48-48h480c26.5 0 48 21.5 48 48zM152.5 331.2L215.7 176h-42.5l-39.3 106-4.3-21.5-14-71.4c-2.3-9.9-9.4-12.7-18.2-13.1H32.7l-.7 3.1c15.9 4 29.5 9.8 42.3 17.1l35.7 135h42.8zm94.4.2L272.1 176h-40.2l-25.1 155.4h40.1zm139.9-50.8c.2-17.7-10.6-31.2-33.7-42.3-14.1-7.1-22.7-11.9-22.7-19.2.2-6.6 7.3-13.4 23.1-13.4 13.1-.3 22.7 2.8 29.9 5.9l3.6 1.7 5.5-33.6c-7.9-3.1-20.5-6.6-36-6.6-39.7 0-67.6 21.2-67.8 51.4-.3 22.3 20 34.7 35.2 42.2 15.5 7.6 20.8 12.6 20.8 19.3-.2 10.4-12.6 15.2-24.1 15.2-16 0-24.6-2.5-37.7-8.3l-5.3-2.5-5.6 34.9c9.4 4.3 26.8 8.1 44.8 8.3 42.2.1 69.7-20.8 70-53zM528 331.4L495.6 176h-31.1c-9.6 0-16.9 2.8-21 12.9l-59.7 142.5H426s6.9-19.2 8.4-23.3H486c1.2 5.5 4.8 23.3 4.8 23.3H528z" />
-                        </svg>
-                      </span>
-                      <span className="w-8 h-6 bg-white rounded-sm flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="h-4 w-4">
-                          <path fill="#FF5F00" d="M525.6 234.6L501.7 172l-24 62.6h48zm-50 47.4L499.9 146l24.3 136h-48.6zm-124.3 0L375.6 146l24.3 136h-48.6zm-1.7-185.7L324.7 172l-24-62.6h48zm-26.7 138.3L347.2 146l24.3 136h-48.6zm-124.3 0L223.2 146l24.3 136h-48.6zm-1.7-185.7L122.7 172l-24-62.6h48zm-26.7 138.3L145.2 146l24.3 136h-48.6zM48 234.6L24.1 172 0 234.6h48zm424.3 47.4l24.3-136 24.3 136h-48.6zm-300.6 0l24.3-136 24.3 136h-48.6zm-148.6 0l24.3-136 24.3 136h-48.6z"/>
-                        </svg>
-                      </span>
-                    </div>
-                  </>
-                )}
-              </button>
-              
-              <button
-                className="flex items-center justify-center py-3 px-4 bg-blue-400 text-white font-bold rounded-md shadow"
-                onClick={handleSubscribe}
-                disabled={isLoading || amount <= 0}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="h-6 w-6 mr-2">
-                  <path fill="#ffffff" d="M186.3 258.2c0 12.2-9.7 21.5-22 21.5-9.2 0-16-5.2-16-15 0-12.2 9.5-21.5 22-21.5 9.2 0 16 5.2 16 15 0 12.2-9.7 21.5-22 21.5zm-105.8 48.5c-9.2 0-16-5.2-16-15 0-12.2 9.5-21.5 22-21.5 9.2 0 16 5.2 16 15 0 12.2-9.7 21.5-22 21.5zm273.9-15.3c0-17.2-26.2-14.3-26.2-27.6 0-5.1 3.7-8.3 10.5-8.3 3.7 0 7.1 1 9.8 2.4l2-12.2c-3.7-1.4-8.5-2-13.2-2-13.9 0-23.9 7.6-23.9 19.3 0 8.3 7.3 13.9 14.6 16.6 6.4 2.7 8.5 5.1 8.5 8.5 0 5.1-4.9 7.6-11.2 7.6-5.1 0-10.3-1.4-13.7-2.9l-2 13.4c4.9 1.7 10.5 2.7 16.9 2.7 15.9 0.2 25.9-7.9 25.9-20.1zm55.2-45.3l-4.9-29.4h-24l-27.3 144.3h24l9.8-51.9h19.1c20.6 0 34.9-14.9 34.9-34.9 0-13.2-7.9-25.4-31.6-28.1zm-6.8 32.8c0 9.5-7.9 15.4-20.6 15.4h-10.3l4.9-28.1h8.3c13.6 0 17.7 7.3 17.7 12.7z"/>
-                </svg>
-                PayPal
-              </button>
-            </div>
+            <button
+              className="w-full flex items-center justify-center py-3 px-4 bg-blue-500 text-white font-bold rounded-md shadow hover:bg-blue-600 transition-colors"
+              onClick={handleSubscribe}
+              disabled={isLoading || amount <= 0}
+            >
+              {isLoading ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Processing...
+                </span>
+              ) : (
+                <>
+                  Donate with Credit/Debit Card
+                  <div className="flex space-x-1 ml-2">
+                    <span className="w-8 h-6 bg-white rounded-sm flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="h-4 w-4">
+                        <path fill="#007bff" d="M470.1 231.3s7.6 37.2 9.3 45H446c3.3-8.9 16-43.5 16-43.5-.2.3 3.3-9.1 5.3-14.9l2.8 13.4zM576 80v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V80c0-26.5 21.5-48 48-48h480c26.5 0 48 21.5 48 48zM152.5 331.2L215.7 176h-42.5l-39.3 106-4.3-21.5-14-71.4c-2.3-9.9-9.4-12.7-18.2-13.1H32.7l-.7 3.1c15.9 4 29.5 9.8 42.3 17.1l35.7 135h42.8zm94.4.2L272.1 176h-40.2l-25.1 155.4h40.1zm139.9-50.8c.2-17.7-10.6-31.2-33.7-42.3-14.1-7.1-22.7-11.9-22.7-19.2.2-6.6 7.3-13.4 23.1-13.4 13.1-.3 22.7 2.8 29.9 5.9l3.6 1.7 5.5-33.6c-7.9-3.1-20.5-6.6-36-6.6-39.7 0-67.6 21.2-67.8 51.4-.3 22.3 20 34.7 35.2 42.2 15.5 7.6 20.8 12.6 20.8 19.3-.2 10.4-12.6 15.2-24.1 15.2-16 0-24.6-2.5-37.7-8.3l-5.3-2.5-5.6 34.9c9.4 4.3 26.8 8.1 44.8 8.3 42.2.1 69.7-20.8 70-53zM528 331.4L495.6 176h-31.1c-9.6 0-16.9 2.8-21 12.9l-59.7 142.5H426s6.9-19.2 8.4-23.3H486c1.2 5.5 4.8 23.3 4.8 23.3H528z" />
+                      </svg>
+                    </span>
+                    <span className="w-8 h-6 bg-white rounded-sm flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="h-4 w-4">
+                        <path fill="#FF5F00" d="M525.6 234.6L501.7 172l-24 62.6h48zm-50 47.4L499.9 146l24.3 136h-48.6zm-124.3 0L375.6 146l24.3 136h-48.6zm-1.7-185.7L324.7 172l-24-62.6h48zm-26.7 138.3L347.2 146l24.3 136h-48.6zm-124.3 0L223.2 146l24.3 136h-48.6zm-1.7-185.7L122.7 172l-24-62.6h48zm-26.7 138.3L145.2 146l24.3 136h-48.6zM48 234.6L24.1 172 0 234.6h48zm424.3 47.4l24.3-136 24.3 136h-48.6zm-300.6 0l24.3-136 24.3 136h-48.6zm-148.6 0l24.3-136 24.3 136h-48.6z"/>
+                      </svg>
+                    </span>
+                  </div>
+                </>
+              )}
+            </button>
           </div>
           
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-            Your payment details will be processed securely by Stripe, a payment processor (for credit/debit cards) or 
-            PayPal, and a record of your donation will be stored securely.
+            Your payment details will be processed securely by Stripe, a payment processor, 
+            and a record of your donation will be stored securely.
           </p>
           
           <p className="text-sm text-gray-500 dark:text-gray-400">
