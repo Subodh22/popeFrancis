@@ -31,6 +31,16 @@ export default function ChatMessage({ role, content, isStreaming = false }: Chat
     }
   }, [content, isStreaming, isUser]);
   
+  // Function to get user's initials for the avatar
+  const getUserInitials = () => {
+    if (user?.displayName) {
+      return user.displayName.charAt(0).toUpperCase();
+    } else if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return "U";
+  };
+  
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-5 group`}>
       <div className={`flex max-w-[85%] ${isUser ? "flex-row-reverse" : "flex-row"} items-start gap-3`}>
@@ -45,12 +55,14 @@ export default function ChatMessage({ role, content, isStreaming = false }: Chat
                 />
               </div>
             ) : user?.photoURL ? (
-              <AvatarImage src={user.photoURL} alt={user.displayName || "User"} />
-            ) : null}
-            {isUser && (
-              <AvatarFallback className="bg-blue-600 text-white">
-                {user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
-              </AvatarFallback>
+              <AvatarImage 
+                src={user.photoURL} 
+                alt={user.displayName || "User"} 
+              />
+            ) : (
+              <div className="w-full h-full bg-blue-600 text-white flex items-center justify-center font-semibold">
+                {getUserInitials()}
+              </div>
             )}
           </Avatar>
         </div>
